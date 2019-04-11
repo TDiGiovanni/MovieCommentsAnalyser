@@ -159,7 +159,9 @@ trainingData, testingData, trainingDataLabels, testingDataLabels = train_test_sp
 # X_train,    X_test,      Y_train,            Y_test
 
 
-# Classifieurs SVC et Random forest
+# # Sans grid search
+
+# Classifieurs SVC et Random forest, avec leurs paramètres par défaut
 
 # In[ ]:
 
@@ -173,6 +175,8 @@ for name, model in models:
     crossVal = cross_val_score(model, data, dataLabels, cv = kFold, scoring = "accuracy")
     print(name, ": ", crossVal.mean(), " (", crossVal.std(), ") \n")
 
+
+# # Avec grid search
 
 # Définition des classifieurs et leurs paramètres
 
@@ -192,12 +196,12 @@ parameters = {
     ],
     
     'RandomForestClassifier': [
-        #TODO: ajouter les paramètres
+        #TODO: ajouter les paramètres à tester
     ]
 }
 
 
-# On utilise un grid search pour rechercher le meilleur classifieur entre SVC et Random Forest, et ses meilleurs paramètres
+# Recherche du meilleur classifieur entre SVC et Random Forest, et de ses meilleurs paramètres
 
 # In[ ]:
 
@@ -240,17 +244,16 @@ for result in results:
 
 
 from sklearn.pipeline import Pipeline
-
 pipeline = Pipeline([("vectorizer", TfidfVectorizer(preprocessor = cleanText, ngram_range = (1, 2), min_df = 0.05)),
-    ("classifier", classifiers[results[0].name])])
+    ("classifier", ) #TODO: ajouter le classifieur avec les bons paramètres
 
 
-# Sauvegarde du modèle dans un fichier pickle
+# Sauvegarde dans un fichier pickle
 
 # In[ ]:
 
 
 import pickle
 
-pickle.dump(results[0], open("groupeE.pkl", 'wb'))
+pickle.dump(pipeline, open("groupeE.pkl", 'wb'))
 
