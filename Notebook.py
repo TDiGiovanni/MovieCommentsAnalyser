@@ -114,6 +114,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 # Sickit learn met régulièrement à jour des versions et indique des futurs warnings
 # Ces deux lignes permettent de ne pas les afficher
@@ -244,8 +247,28 @@ for result in results:
 
 
 from sklearn.pipeline import Pipeline
-pipeline = Pipeline([("vectorizer", TfidfVectorizer(preprocessor = cleanText, ngram_range = (1, 2), min_df = 0.05)),
-    ("classifier", ) #TODO: ajouter le classifieur avec les bons paramètres
+
+vectorizer = TfidfVectorizer(preprocessor = cleanText, ngram_range = (1, 2), min_df = 0.01, max_df = 0.9, sublinear_tf = False, smooth_idf = True)
+
+classifier = SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+                 decision_function_shape='ovr', degree=3, gamma='auto_deprecated',
+                 kernel='linear', max_iter=-1, probability=False, random_state=None,
+                 shrinking=True, tol=0.001, verbose=False)
+
+pipeline = Pipeline([
+    ("vectorizer", vectorizer),
+    ("classifier", classifier)
+])
+
+pipeline.fit(trainingData, trainingDataLabels)
+
+result = pipeline.predict(testingData)
+print('\nAccuracy: ', accuracy_score(result, testingDataLabels),'\n')
+
+matrix = confusion_matrix(testingDataLabels, result)
+print ('\nMatrice de confusion: \n', matrix, "\n")
+
+print ('\n', classification_report(testingDataLabels, result), "\n")
 
 
 # Sauvegarde dans un fichier pickle
@@ -257,3 +280,14 @@ import pickle
 
 pickle.dump(pipeline, open("groupeE.pkl", 'wb'))
 
+clf_loaded = pickle.load(open('groupeE.pkl', 'rb'))
+
+movieComments = pandas.read_csv('test_data.csv', sep = '\t', header = None, encoding = "utf8")
+movieCommentsLabels = pandas.read_csv('test_labels.csv', sep = '\t', header = None, encoding = "utf8")
+
+movieCommentsArray = movieComments.values
+movieCommentsLabelsArray = movieCommentsLabels.values
+
+result = clf_loaded.predict(movieCommentsArray[:, 0])
+
+print (accuracy_score(result, movieCommentsLabelsArray[:, 0]), '\n')
