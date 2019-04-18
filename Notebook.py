@@ -187,7 +187,7 @@ for name, model in models:
 
 
 classifiers = {
-    'DecisionTreeClassifier': DecisionTreeClassifier(),
+    'RandomForestClassifier': RandomForestClassifier(),
     'SVC': SVC()
 }
 
