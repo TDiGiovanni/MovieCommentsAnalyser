@@ -1,6 +1,7 @@
 import nltk
 import unicodedata
 import contractions
+import inflect
 from IPython.display import display
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -38,14 +39,14 @@ def clean_text(commentString):
     tokenizedText = [word for word in tokenizedText if not word in OurStopWords]
     
     # Converting numbers
-    #inflectEngine = inflect.engine()
-    #newWords = []
-    #for word in tokenizedText:
-    #    if word.isdigit():
-    #        newWords.append(inflectEngine.number_to_words(word))
-    #    else:
-    #        newWords.append(word)
-    #tokenizedText = newWords
+    inflectEngine = inflect.engine()
+    newWords = []
+    for word in tokenizedText:
+        if word.isdigit():
+            newWords.append(inflectEngine.number_to_words(word))
+        else:
+            newWords.append(word)
+    tokenizedText = newWords
 
     # Lemmatization
     lemmatizer = WordNetLemmatizer()
