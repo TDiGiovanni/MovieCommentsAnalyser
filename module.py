@@ -2,7 +2,6 @@ import nltk
 import unicodedata
 import contractions
 import inflect
-from IPython.display import display
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
